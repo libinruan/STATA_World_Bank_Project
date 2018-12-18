@@ -4,7 +4,7 @@ In the solution below, I started with itemizing the information given in Problem
 
 ## Research Goal
 The Galactic Empire wants to revise its current labor income tax schedule to alleviate a huge deficit and to finance its army. The research goal is to evaluate the impact of the fiscal policy change in the Galactic Empire through a counterfactual policy experiment. <BR>
-    
+​    
 **Targets to be quantified:**
 1. The net total revenues from the entire set of reforms;
 2. The overall impact on national Gini coefficient, poverty, and average incomes;
@@ -56,7 +56,7 @@ use "Galactic Empire HBS.dta"
 describe
 ```
 
-    
+
     Contains data from Galactic Empire HBS.dta
       obs:       116,902                          
      vars:            35                          13 Dec 2018 09:51
@@ -102,7 +102,7 @@ describe
     inc_l_3         long    %12.0g                Wages/salaries, family allowances, extra hours, regular bonuses, vouchers, or ot
     ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     Sorted by: 
-    
+
 
 ### Data Preprocessing
 1. Encoding the long string vairable `hhid` into a numeric variable `nHHid` instead of an encoded variable with a label. [Reference](https://www.stata.com/support/faqs/data-management/encoding-string-variable/)
@@ -164,11 +164,12 @@ We can find missing values in some variables such as trooper (see below).
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
 </style>
+
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -333,7 +334,7 @@ We can find missing values in some variables such as trooper (see below).
 mdesc
 ```
 
-    
+
         Variable    |     Missing          Total     Percent Missing
     ----------------+-----------------------------------------------
                hhid |           0        116,902           0.00
@@ -373,14 +374,14 @@ mdesc
             inc_l_3 |      72,918        116,902          62.38
                 hid |           0        116,902           0.00
     ----------------+-----------------------------------------------
-    
+
 
 
 ```stata
 tabulate weight if weight == 0
 ```
 
-    
+
      Weight for |
           total |
          family |
@@ -391,7 +392,7 @@ tabulate weight if weight == 0
               0 |     24,058      100.00      100.00
     ------------+-----------------------------------
           Total |     24,058      100.00
-    
+
 
 About $20\%$ $(24,058/116,902)$ of the observations have zero weight.  
 
@@ -403,7 +404,7 @@ drop if weight <= 0
 ```
 
     (24,058 observations deleted)
-    
+
 
 In addition, some data points have positive weight but missing values in labor income variables (see below).
 
@@ -422,7 +423,7 @@ In addition, some data points have positive weight but missing values in labor i
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -579,7 +580,7 @@ misstable summarize
            inc_l_2 |    55,662              37,182  |     92          0      200000
            inc_l_3 |    55,626              37,218  |    497          0      300000
       -----------------------------------------------------------------------------
-    
+
 
 I replace missing values with zero before proceeding.
 
@@ -607,7 +608,7 @@ Now I have filled all the missing values in variables `inc_*` and `trooper` with
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -773,7 +774,7 @@ generate totalIncome = laborIncome + nonLaborIncome
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -890,7 +891,7 @@ Informl workers account for about $7.5\%$ of the population (see below).
 tabulate ifWorker
 ```
 
-    
+
        Informal |
        salaried |
          worker |      Freq.     Percent        Cum.
@@ -899,7 +900,7 @@ tabulate ifWorker
               1 |      7,581        8.17      100.00
     ------------+-----------------------------------
           Total |     92,844      100.00
-    
+
 
 As we can see in the table below, there exist informal workers whose labor income exceeds the standard personal allowance $\$15000$.
 
@@ -908,11 +909,11 @@ As we can see in the table below, there exist informal workers whose labor incom
 su nonLaborIncome if nonLaborIncome > 15000 & ifWorker == 1
 ```
 
-    
+
         Variable |        Obs        Mean    Std. Dev.       Min        Max
     -------------+---------------------------------------------------------
     nonLaborIn~e |         65    26222.37    13545.22      15200     103000
-    
+
 
 
 ```stata
@@ -929,7 +930,7 @@ su nonLaborIncome if nonLaborIncome > 15000 & ifWorker == 1
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1050,9 +1051,9 @@ qui egen count_of_jobstatus = rowtotal(`gJobStatus')
 table count_of_jobstatus
 ```
 
-    
-    
-    
+
+​    
+​    
     ----------------------
     count_of_ |
     jobstatus |      Freq.
@@ -1061,7 +1062,7 @@ table count_of_jobstatus
             1 |     35,743
             2 |          1
     ----------------------
-    
+
 
 Who is this person?
 
@@ -1086,7 +1087,7 @@ local keyvarlist = r(varlist)
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1173,10 +1174,10 @@ generate taxableIncome = 0
 replace taxableIncome = max(0, totalIncome - allowance)
 ```
 
-    
-    
+
+​    
     (33,678 real changes made)
-    
+
 
 
 ```stata
@@ -1193,7 +1194,7 @@ replace taxableIncome = max(0, totalIncome - allowance)
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1350,7 +1351,7 @@ forval i = 1/`numtimes' {
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1474,7 +1475,7 @@ qui replace taxPayment = 0 if ifWorker == 1 // informal sector wage earner
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1594,7 +1595,7 @@ gen disposableIncome = totalIncome - taxPayment
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1708,7 +1709,7 @@ local gIsPoor isPoor_*
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1873,7 +1874,7 @@ There exist young entrepreneurs or young wage earners who are relatively rich co
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -1915,7 +1916,7 @@ People 18 years old or younger who receive no income account for a non-trivial f
 tabulate age if age < 10 & totalIncome == 0
 ```
 
-    
+
     Individual' |
           s age |      Freq.     Percent        Cum.
     ------------+-----------------------------------
@@ -1931,7 +1932,7 @@ tabulate age if age < 10 & totalIncome == 0
               9 |      1,494       10.81      100.00
     ------------+-----------------------------------
           Total |     13,815      100.00
-    
+
 
 ## Macro Statistics of the Base Economy
 
@@ -1974,7 +1975,7 @@ qui egen netTotalRevenue1 = sum(taxRevenue1 - empireExpense1)
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -2009,12 +2010,12 @@ di "National Gini Coefficient: "
 di "Gini 1: " r(gini)
 ```
 
-    
-    
+
+​    
     National Gini Coefficient: 
     
     Gini 1: .39747555
-    
+
 
 ### Poverty
 
@@ -2026,8 +2027,8 @@ matrix b_ext = r(table)
 local sharePoor_ext1 b_ext[1,2]
 ```
 
-    
-    
+
+​    
     Proportion estimation             Number of obs   = 1103738460
     
     --------------------------------------------------------------
@@ -2038,8 +2039,9 @@ local sharePoor_ext1 b_ext[1,2]
                0 |    .564767   .0000149      .5647378    .5647962
                1 |    .435233   .0000149      .4352038    .4352622
     --------------------------------------------------------------
-    
-    
+
+
+​    
     r(table)[9,2]
              isPoor_ext:  isPoor_ext:
                       0            1
@@ -2052,9 +2054,10 @@ local sharePoor_ext1 b_ext[1,2]
         df    1.104e+09    1.104e+09
       crit     1.959964     1.959964
      eform            0            0
-    
-    
-    
+
+
+​    
+​    
 
 
 ```stata
@@ -2064,8 +2067,8 @@ matrix b_mod = r(table)
 local sharePoor_mod1 b_mod[1,2]
 ```
 
-    
-    
+
+​    
     Proportion estimation             Number of obs   = 1103738460
     
     --------------------------------------------------------------
@@ -2076,8 +2079,9 @@ local sharePoor_mod1 b_mod[1,2]
                0 |   .5037526    .000015      .5037231    .5037821
                1 |   .4962474    .000015      .4962179    .4962769
     --------------------------------------------------------------
-    
-    
+
+
+​    
     r(table)[9,2]
              isPoor_mod:  isPoor_mod:
                       0            1
@@ -2090,9 +2094,10 @@ local sharePoor_mod1 b_mod[1,2]
         df    1.104e+09    1.104e+09
       crit     1.959964     1.959964
      eform            0            0
-    
-    
-    
+
+
+​    
+​    
 
 
 ```stata
@@ -2102,8 +2107,8 @@ matrix b_vul = r(table)
 local sharePoor_vul1 b_vul[1,2]
 ```
 
-    
-    
+
+​    
     Proportion estimation             Number of obs   = 1103738460
     
     --------------------------------------------------------------
@@ -2114,8 +2119,9 @@ local sharePoor_vul1 b_vul[1,2]
                0 |   .3829648   .0000146      .3829362    .3829935
                1 |   .6170352   .0000146      .6170065    .6170638
     --------------------------------------------------------------
-    
-    
+
+
+​    
     r(table)[9,2]
              isPoor_vul:  isPoor_vul:
                       0            1
@@ -2128,9 +2134,10 @@ local sharePoor_vul1 b_vul[1,2]
         df    1.104e+09    1.104e+09
       crit     1.959964     1.959964
      eform            0            0
-    
-    
-    
+
+
+​    
+​    
 
 
 ```stata
@@ -2139,13 +2146,13 @@ di "PoorMod 1: " `sharePoor_mod1'
 di "PoorVul 1: " `sharePoor_vul1'
 ```
 
-    
+
     PoorExt 1: .435233
     
     PoorMod 1: .49624744
     
     PoorVul 1: .61703516
-    
+
 
 ### Average Incomes
 
@@ -2155,13 +2162,14 @@ su totalIncome [fw=weight]
 local totInc1 = r(mean)
 ```
 
-    
-    
+
+​    
         Variable |        Obs        Mean    Std. Dev.       Min        Max
     -------------+---------------------------------------------------------
      totalIncome | 1103738460    7932.404    11689.21          0     800000
-    
-    
+
+
+​    
 
 
 ```stata
@@ -2169,13 +2177,14 @@ su disposableIncome [fw=weight]
 local disInc1 = r(mean)
 ```
 
-    
-    
+
+​    
         Variable |        Obs        Mean    Std. Dev.       Min        Max
     -------------+---------------------------------------------------------
     disposable~e | 1103738460    7700.887    11044.13          0     720500
-    
-    
+
+
+​    
 
 
 ```stata
@@ -2183,11 +2192,11 @@ di "totoal income 1:     " `totInc1'
 di "disposable income 1: " `disInc1'
 ```
 
-    
+
     totoal income 1:     7932.404
     
     disposable income 1: 7700.8871
-    
+
 
 ### Lorenz Curves
 
@@ -2198,261 +2207,6 @@ Overlaying Lorenz Curves. [Reference](http://repec.sowi.unibe.ch/files/wp15/jann
 graph display
 qui lorenz estimate totalIncome disposableIncome, graph(overlay aspectratio(1) xlabels(, grid) ciopts(recast(rline)) lp(dash))
 ```
-
-
-                <iframe frameborder="0" scrolling="no" height="436" width="600"                srcdoc="<html><body>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
-&lt;!-- This is a Stata 15.1 generated SVG file (http://www.stata.com) --&gt;
-
-&lt;svg version=&quot;1.1&quot; width=&quot;600px&quot; height=&quot;436px&quot; viewBox=&quot;0 0 3960 2880&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-	&lt;desc&gt;Stata Graph - Graph&lt;/desc&gt;
-	&lt;rect x=&quot;0&quot; y=&quot;0&quot; width=&quot;3960&quot; height=&quot;2880&quot; style=&quot;fill:#EAF2F3;stroke:none&quot;/&gt;
-	&lt;rect x=&quot;0.00&quot; y=&quot;0.00&quot; width=&quot;3959.88&quot; height=&quot;2880.00&quot; style=&quot;fill:#EAF2F3&quot;/&gt;
-	&lt;rect x=&quot;2.88&quot; y=&quot;2.88&quot; width=&quot;3954.12&quot; height=&quot;2874.24&quot; style=&quot;fill:none;stroke:#EAF2F3;stroke-width:5.76&quot;/&gt;
-	&lt;rect x=&quot;1058.56&quot; y=&quot;100.86&quot; width=&quot;2132.83&quot; height=&quot;2132.77&quot; style=&quot;fill:#FFFFFF&quot;/&gt;
-	&lt;rect x=&quot;1061.44&quot; y=&quot;103.74&quot; width=&quot;2127.07&quot; height=&quot;2127.01&quot; style=&quot;fill:none;stroke:#FFFFFF;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;2170.27&quot; x2=&quot;3191.39&quot; y2=&quot;2170.27&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;1769.06&quot; x2=&quot;3191.39&quot; y2=&quot;1769.06&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;1367.85&quot; x2=&quot;3191.39&quot; y2=&quot;1367.85&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;966.64&quot; x2=&quot;3191.39&quot; y2=&quot;966.64&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;565.43&quot; x2=&quot;3191.39&quot; y2=&quot;565.43&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;164.22&quot; x2=&quot;3191.39&quot; y2=&quot;164.22&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.92&quot; y1=&quot;2233.63&quot; x2=&quot;1121.92&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1523.12&quot; y1=&quot;2233.63&quot; x2=&quot;1523.12&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2233.63&quot; x2=&quot;1924.31&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;2233.63&quot; x2=&quot;2325.51&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;2233.63&quot; x2=&quot;2726.71&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3128.03&quot; y1=&quot;2233.63&quot; x2=&quot;3128.03&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.92&quot; y1=&quot;2170.27&quot; x2=&quot;3128.03&quot; y2=&quot;164.22&quot; style=&quot;stroke:#C10534;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2160.87&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2160.87&quot; x2=&quot;2124.91&quot; y2=&quot;2117.55&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2117.55&quot; x2=&quot;2225.15&quot; y2=&quot;2048.25&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2048.25&quot; x2=&quot;2325.51&quot; y2=&quot;1962.74&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1962.74&quot; x2=&quot;2425.75&quot; y2=&quot;1863.49&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1863.49&quot; x2=&quot;2526.11&quot; y2=&quot;1746.17&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1746.17&quot; x2=&quot;2626.35&quot; y2=&quot;1604.72&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1604.72&quot; x2=&quot;2726.71&quot; y2=&quot;1434.43&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1434.43&quot; x2=&quot;2826.95&quot; y2=&quot;1231.60&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1231.60&quot; x2=&quot;2927.31&quot; y2=&quot;989.66&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;989.66&quot; x2=&quot;3027.67&quot; y2=&quot;689.56&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;689.56&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2157.52&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2157.52&quot; x2=&quot;2124.91&quot; y2=&quot;2110.99&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2110.99&quot; x2=&quot;2225.15&quot; y2=&quot;2039.71&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2039.71&quot; x2=&quot;2325.51&quot; y2=&quot;1953.58&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1953.58&quot; x2=&quot;2425.75&quot; y2=&quot;1853.83&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1853.83&quot; x2=&quot;2526.11&quot; y2=&quot;1735.28&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1735.28&quot; x2=&quot;2626.35&quot; y2=&quot;1592.96&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1592.96&quot; x2=&quot;2726.71&quot; y2=&quot;1422.06&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1422.06&quot; x2=&quot;2826.95&quot; y2=&quot;1218.85&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1218.85&quot; x2=&quot;2927.31&quot; y2=&quot;976.17&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;976.17&quot; x2=&quot;3027.67&quot; y2=&quot;675.94&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;675.94&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2160.62&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2160.62&quot; x2=&quot;2124.91&quot; y2=&quot;2116.07&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2116.07&quot; x2=&quot;2225.15&quot; y2=&quot;2045.03&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2045.03&quot; x2=&quot;2325.51&quot; y2=&quot;1958.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1958.40&quot; x2=&quot;2425.75&quot; y2=&quot;1858.78&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1858.78&quot; x2=&quot;2526.11&quot; y2=&quot;1740.47&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1740.47&quot; x2=&quot;2626.35&quot; y2=&quot;1598.78&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1598.78&quot; x2=&quot;2726.71&quot; y2=&quot;1427.25&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1427.25&quot; x2=&quot;2826.95&quot; y2=&quot;1223.06&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1223.06&quot; x2=&quot;2927.31&quot; y2=&quot;980.75&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;980.75&quot; x2=&quot;3027.67&quot; y2=&quot;678.91&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;678.91&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2157.15&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2157.15&quot; x2=&quot;2124.91&quot; y2=&quot;2109.26&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2109.26&quot; x2=&quot;2225.15&quot; y2=&quot;2036.37&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2036.37&quot; x2=&quot;2325.51&quot; y2=&quot;1949.25&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1949.25&quot; x2=&quot;2425.75&quot; y2=&quot;1849.38&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1849.38&quot; x2=&quot;2526.11&quot; y2=&quot;1729.83&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1729.83&quot; x2=&quot;2626.35&quot; y2=&quot;1587.39&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1587.39&quot; x2=&quot;2726.71&quot; y2=&quot;1414.88&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1414.88&quot; x2=&quot;2826.95&quot; y2=&quot;1210.56&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1210.56&quot; x2=&quot;2927.31&quot; y2=&quot;967.88&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;967.88&quot; x2=&quot;3027.67&quot; y2=&quot;666.17&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;666.17&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1179.34&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1208.17&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1265.71&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1294.55&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1352.09&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1380.93&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1438.47&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1467.30&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1524.85&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1553.68&quot; y1=&quot;2170.40&quot; x2=&quot;1611.35&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1640.06&quot; y1=&quot;2170.40&quot; x2=&quot;1697.73&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1726.56&quot; y1=&quot;2170.40&quot; x2=&quot;1784.10&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1812.94&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1870.48&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1899.32&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;1956.61&quot; y2=&quot;2166.81&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1985.32&quot; y1=&quot;2163.59&quot; x2=&quot;2024.55&quot; y2=&quot;2159.26&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2159.26&quot; x2=&quot;2041.01&quot; y2=&quot;2151.83&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2067.37&quot; y1=&quot;2140.08&quot; x2=&quot;2119.84&quot; y2=&quot;2116.44&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2143.97&quot; y1=&quot;2100.85&quot; x2=&quot;2191.12&quot; y2=&quot;2067.93&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2214.75&quot; y1=&quot;2051.34&quot; x2=&quot;2225.15&quot; y2=&quot;2044.04&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2044.04&quot; x2=&quot;2259.30&quot; y2=&quot;2014.84&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2281.08&quot; y1=&quot;1996.15&quot; x2=&quot;2324.89&quot; y2=&quot;1958.65&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2345.43&quot; y1=&quot;1938.36&quot; x2=&quot;2386.27&quot; y2=&quot;1897.89&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2406.81&quot; y1=&quot;1877.59&quot; x2=&quot;2425.75&quot; y2=&quot;1858.66&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1858.66&quot; x2=&quot;2445.67&quot; y2=&quot;1835.15&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2464.36&quot; y1=&quot;1813.24&quot; x2=&quot;2501.73&quot; y2=&quot;1769.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2520.29&quot; y1=&quot;1747.40&quot; x2=&quot;2526.11&quot; y2=&quot;1740.72&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1740.72&quot; x2=&quot;2554.20&quot; y2=&quot;1701.00&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2570.78&quot; y1=&quot;1677.48&quot; x2=&quot;2604.07&quot; y2=&quot;1630.46&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2620.65&quot; y1=&quot;1606.94&quot; x2=&quot;2626.35&quot; y2=&quot;1598.90&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1598.90&quot; x2=&quot;2650.60&quot; y2=&quot;1557.69&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2665.20&quot; y1=&quot;1532.82&quot; x2=&quot;2694.41&quot; y2=&quot;1483.19&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2709.01&quot; y1=&quot;1458.32&quot; x2=&quot;2726.71&quot; y2=&quot;1428.24&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1428.24&quot; x2=&quot;2736.73&quot; y2=&quot;1407.95&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2749.48&quot; y1=&quot;1382.08&quot; x2=&quot;2774.97&quot; y2=&quot;1330.48&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2787.72&quot; y1=&quot;1304.61&quot; x2=&quot;2813.21&quot; y2=&quot;1253.01&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2825.95&quot; y1=&quot;1227.14&quot; x2=&quot;2826.95&quot; y2=&quot;1225.29&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1225.29&quot; x2=&quot;2848.11&quot; y2=&quot;1174.05&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2859.12&quot; y1=&quot;1147.45&quot; x2=&quot;2881.27&quot; y2=&quot;1094.23&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2892.28&quot; y1=&quot;1067.62&quot; x2=&quot;2914.31&quot; y2=&quot;1014.41&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2925.33&quot; y1=&quot;987.80&quot; x2=&quot;2927.31&quot; y2=&quot;982.98&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;982.98&quot; x2=&quot;2943.89&quot; y2=&quot;933.23&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2953.05&quot; y1=&quot;905.88&quot; x2=&quot;2971.36&quot; y2=&quot;851.30&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2980.52&quot; y1=&quot;823.95&quot; x2=&quot;2998.71&quot; y2=&quot;769.38&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3007.87&quot; y1=&quot;742.03&quot; x2=&quot;3026.06&quot; y2=&quot;687.45&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3032.25&quot; y1=&quot;659.24&quot; x2=&quot;3043.14&quot; y2=&quot;602.81&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3048.58&quot; y1=&quot;574.47&quot; x2=&quot;3059.47&quot; y2=&quot;517.91&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3065.04&quot; y1=&quot;489.69&quot; x2=&quot;3075.93&quot; y2=&quot;433.14&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3081.38&quot; y1=&quot;404.92&quot; x2=&quot;3092.26&quot; y2=&quot;348.37&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3097.71&quot; y1=&quot;320.03&quot; x2=&quot;3108.72&quot; y2=&quot;263.47&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3114.17&quot; y1=&quot;235.26&quot; x2=&quot;3125.06&quot; y2=&quot;178.70&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1179.34&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1208.17&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1265.71&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1294.55&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1352.09&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1380.93&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1438.47&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1467.30&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1524.85&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1553.68&quot; y1=&quot;2170.40&quot; x2=&quot;1611.35&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1640.06&quot; y1=&quot;2170.40&quot; x2=&quot;1697.73&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1726.56&quot; y1=&quot;2170.40&quot; x2=&quot;1784.10&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1812.94&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1870.48&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1899.32&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;1956.61&quot; y2=&quot;2166.68&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1985.20&quot; y1=&quot;2163.34&quot; x2=&quot;2024.55&quot; y2=&quot;2158.89&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2158.89&quot; x2=&quot;2040.88&quot; y2=&quot;2151.34&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2067.12&quot; y1=&quot;2139.33&quot; x2=&quot;2119.34&quot; y2=&quot;2115.20&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2143.35&quot; y1=&quot;2099.36&quot; x2=&quot;2190.13&quot; y2=&quot;2065.82&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2213.64&quot; y1=&quot;2048.99&quot; x2=&quot;2225.15&quot; y2=&quot;2040.70&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2040.70&quot; x2=&quot;2257.82&quot; y2=&quot;2012.36&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2279.72&quot; y1=&quot;1993.43&quot; x2=&quot;2323.16&quot; y2=&quot;1955.81&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2343.82&quot; y1=&quot;1935.63&quot; x2=&quot;2384.54&quot; y2=&quot;1895.04&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2404.96&quot; y1=&quot;1874.75&quot; x2=&quot;2425.75&quot; y2=&quot;1854.08&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1854.08&quot; x2=&quot;2443.94&quot; y2=&quot;1832.42&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2462.63&quot; y1=&quot;1810.52&quot; x2=&quot;2499.75&quot; y2=&quot;1766.46&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2518.31&quot; y1=&quot;1744.43&quot; x2=&quot;2526.11&quot; y2=&quot;1735.15&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1735.15&quot; x2=&quot;2552.34&quot; y2=&quot;1698.03&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2568.93&quot; y1=&quot;1674.39&quot; x2=&quot;2602.09&quot; y2=&quot;1627.36&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2618.80&quot; y1=&quot;1603.85&quot; x2=&quot;2626.35&quot; y2=&quot;1593.08&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1593.08&quot; x2=&quot;2648.74&quot; y2=&quot;1554.72&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2663.22&quot; y1=&quot;1529.72&quot; x2=&quot;2692.30&quot; y2=&quot;1480.10&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2706.78&quot; y1=&quot;1455.22&quot; x2=&quot;2726.71&quot; y2=&quot;1421.07&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1421.07&quot; x2=&quot;2734.75&quot; y2=&quot;1404.85&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2747.37&quot; y1=&quot;1378.99&quot; x2=&quot;2772.74&quot; y2=&quot;1327.26&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2785.36&quot; y1=&quot;1301.40&quot; x2=&quot;2810.86&quot; y2=&quot;1249.67&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2823.48&quot; y1=&quot;1223.80&quot; x2=&quot;2826.95&quot; y2=&quot;1216.75&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1216.75&quot; x2=&quot;2846.00&quot; y2=&quot;1170.84&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2857.02&quot; y1=&quot;1144.23&quot; x2=&quot;2878.92&quot; y2=&quot;1091.01&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2890.06&quot; y1=&quot;1064.41&quot; x2=&quot;2911.96&quot; y2=&quot;1011.19&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2922.97&quot; y1=&quot;984.59&quot; x2=&quot;2927.31&quot; y2=&quot;974.31&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;974.31&quot; x2=&quot;2942.03&quot; y2=&quot;930.26&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2951.07&quot; y1=&quot;902.91&quot; x2=&quot;2969.26&quot; y2=&quot;848.21&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2978.29&quot; y1=&quot;820.86&quot; x2=&quot;2996.48&quot; y2=&quot;766.28&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3005.64&quot; y1=&quot;738.93&quot; x2=&quot;3023.83&quot; y2=&quot;684.36&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3030.89&quot; y1=&quot;656.39&quot; x2=&quot;3042.02&quot; y2=&quot;599.96&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3047.59&quot; y1=&quot;571.62&quot; x2=&quot;3058.73&quot; y2=&quot;515.19&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3064.30&quot; y1=&quot;486.97&quot; x2=&quot;3075.43&quot; y2=&quot;430.42&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3081.00&quot; y1=&quot;402.20&quot; x2=&quot;3092.14&quot; y2=&quot;345.64&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3097.71&quot; y1=&quot;317.43&quot; x2=&quot;3108.85&quot; y2=&quot;261.00&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3114.42&quot; y1=&quot;232.66&quot; x2=&quot;3125.55&quot; y2=&quot;176.23&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;2233.63&quot; x2=&quot;855.98&quot; y2=&quot;100.86&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;2170.27&quot; x2=&quot;815.88&quot; y2=&quot;2170.27&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;2170.27&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,2170.27)&quot; text-anchor=&quot;middle&quot;&gt;0&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;1769.06&quot; x2=&quot;815.88&quot; y2=&quot;1769.06&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;1769.06&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,1769.06)&quot; text-anchor=&quot;middle&quot;&gt;.2&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;1367.85&quot; x2=&quot;815.88&quot; y2=&quot;1367.85&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;1367.85&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,1367.85)&quot; text-anchor=&quot;middle&quot;&gt;.4&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;966.64&quot; x2=&quot;815.88&quot; y2=&quot;966.64&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;966.64&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,966.64)&quot; text-anchor=&quot;middle&quot;&gt;.6&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;565.43&quot; x2=&quot;815.88&quot; y2=&quot;565.43&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;565.43&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,565.43)&quot; text-anchor=&quot;middle&quot;&gt;.8&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;164.22&quot; x2=&quot;815.88&quot; y2=&quot;164.22&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;164.22&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,164.22)&quot; text-anchor=&quot;middle&quot;&gt;1&lt;/text&gt;
-	&lt;text x=&quot;655.89&quot; y=&quot;1167.25&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 655.89,1167.25)&quot; text-anchor=&quot;middle&quot;&gt;cumulative outcome proportion&lt;/text&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;2233.63&quot; x2=&quot;3191.39&quot; y2=&quot;2233.63&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;1121.92&quot; y1=&quot;2233.63&quot; x2=&quot;1121.92&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;1121.92&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;0&lt;/text&gt;
-	&lt;line x1=&quot;1523.12&quot; y1=&quot;2233.63&quot; x2=&quot;1523.12&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;1523.12&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;20&lt;/text&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2233.63&quot; x2=&quot;1924.31&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;1924.31&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;40&lt;/text&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;2233.63&quot; x2=&quot;2325.51&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;2325.51&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;60&lt;/text&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;2233.63&quot; x2=&quot;2726.71&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;2726.71&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;80&lt;/text&gt;
-	&lt;line x1=&quot;3128.03&quot; y1=&quot;2233.63&quot; x2=&quot;3128.03&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;3128.03&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;100&lt;/text&gt;
-	&lt;text x=&quot;2124.91&quot; y=&quot;2473.60&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;population percentage&lt;/text&gt;
-	&lt;rect x=&quot;890.50&quot; y=&quot;2558.24&quot; width=&quot;2468.81&quot; height=&quot;186.37&quot; style=&quot;fill:#FFFFFF&quot;/&gt;
-	&lt;rect x=&quot;893.38&quot; y=&quot;2561.12&quot; width=&quot;2463.05&quot; height=&quot;180.61&quot; style=&quot;fill:none;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;933.69&quot; y1=&quot;2651.43&quot; x2=&quot;991.24&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1020.07&quot; y1=&quot;2651.43&quot; x2=&quot;1077.62&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1106.45&quot; y1=&quot;2651.43&quot; x2=&quot;1164.12&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1192.83&quot; y1=&quot;2651.43&quot; x2=&quot;1250.49&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1279.20&quot; y1=&quot;2651.43&quot; x2=&quot;1308.04&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2044.72&quot; y1=&quot;2651.43&quot; x2=&quot;2102.26&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2131.10&quot; y1=&quot;2651.43&quot; x2=&quot;2188.64&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2217.48&quot; y1=&quot;2651.43&quot; x2=&quot;2275.02&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2303.85&quot; y1=&quot;2651.43&quot; x2=&quot;2361.40&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2390.23&quot; y1=&quot;2651.43&quot; x2=&quot;2419.07&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;text x=&quot;1368.06&quot; y=&quot;2686.46&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot;&gt;totalIncome&lt;/text&gt;
-	&lt;text x=&quot;2479.08&quot; y=&quot;2686.46&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot;&gt;disposableIncome&lt;/text&gt;
-&lt;/svg&gt;
-</body></html>"></iframe>
-
-
 
 ## Tax Scheme in the Counterfactual Economy
 
@@ -2554,7 +2308,7 @@ qui replace turnTrooperDisposableIncome = nonLaborIncome + turnTrooperLaborIncom
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -2721,7 +2475,7 @@ qui egen netTotalRevenue2 = sum(taxRevenue2 - empireExpense2)
     .dataframe tbody tr th {
         vertical-align: top;
     }
-
+    
     .dataframe thead th {
         text-align: right;
     }
@@ -2760,12 +2514,12 @@ di "National Gini Coefficient: "
 di "Gini: " r(gini)
 ```
 
-    
-    
+
+​    
     National Gini Coefficient: 
     
     Gini: .38414767
-    
+
 
 
 ```stata
@@ -2796,14 +2550,14 @@ di "PoorMod 2: " `sharePoor_mod2'
 di "PoorVul 2: " `sharePoor_vul2'
 ```
 
-    
-    
-    
-    
-    
-    
-    
-    
+
+​    
+​    
+​    
+​    
+​    
+​    
+​    
     Proportion estimation             Number of obs   = 1103738460
     
     --------------------------------------------------------------
@@ -2814,8 +2568,9 @@ di "PoorVul 2: " `sharePoor_vul2'
                0 |     .65219   .0000143      .6521619    .6522181
                1 |     .34781   .0000143      .3477819    .3478381
     --------------------------------------------------------------
-    
-    
+
+
+​    
     r(table)[9,2]
              isPoor_ext2:  isPoor_ext2:
                        0             1
@@ -2828,10 +2583,11 @@ di "PoorVul 2: " `sharePoor_vul2'
         df     1.104e+09     1.104e+09
       crit      1.959964      1.959964
      eform             0             0
-    
-    
-    
-    
+
+
+​    
+​    
+​    
     Proportion estimation             Number of obs   = 1103738460
     
     --------------------------------------------------------------
@@ -2842,8 +2598,9 @@ di "PoorVul 2: " `sharePoor_vul2'
                0 |    .595008   .0000148       .594979    .5950369
                1 |    .404992   .0000148      .4049631     .405021
     --------------------------------------------------------------
-    
-    
+
+
+​    
     r(table)[9,2]
              isPoor_mod2:  isPoor_mod2:
                        0             1
@@ -2856,10 +2613,11 @@ di "PoorVul 2: " `sharePoor_vul2'
         df     1.104e+09     1.104e+09
       crit      1.959964      1.959964
      eform             0             0
-    
-    
-    
-    
+
+
+​    
+​    
+​    
     Proportion estimation             Number of obs   = 1103738460
     
     --------------------------------------------------------------
@@ -2870,8 +2628,9 @@ di "PoorVul 2: " `sharePoor_vul2'
                0 |   .3957049   .0000147      .3956761    .3957338
                1 |   .6042951   .0000147      .6042662    .6043239
     --------------------------------------------------------------
-    
-    
+
+
+​    
     r(table)[9,2]
              isPoor_vul2:  isPoor_vul2:
                        0             1
@@ -2884,15 +2643,16 @@ di "PoorVul 2: " `sharePoor_vul2'
         df     1.104e+09     1.104e+09
       crit      1.959964      1.959964
      eform             0             0
-    
-    
-    
+
+
+​    
+​    
     PoorExt 2: .34780999
     
     PoorMod 2: .40499201
     
     PoorVul 2: .6042951
-    
+
 
 
 ```stata
@@ -2909,284 +2669,26 @@ graph display
 qui lorenz estimate totalIncome2 disposableIncome2, graph(overlay aspectratio(1) xlabels(, grid) ciopts(recast(rline)) lp(dash))
 ```
 
-    
-    
+
+​    
         Variable |        Obs        Mean    Std. Dev.       Min        Max
     -------------+---------------------------------------------------------
     totalIncome2 | 1103738460    8536.843    11468.97          0     800000
-    
-    
-    
+
+
+​    
+​    
         Variable |        Obs        Mean    Std. Dev.       Min        Max
     -------------+---------------------------------------------------------
     disposable~2 | 1103738460    8186.529     10594.2          0     680750
-    
-    
+
+
+​    
     totoal income 2:     8536.8431
     
     disposable income 2: 8186.5293
-    
 
 
-                <iframe frameborder="0" scrolling="no" height="436" width="600"                srcdoc="<html><body>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
-&lt;!-- This is a Stata 15.1 generated SVG file (http://www.stata.com) --&gt;
-
-&lt;svg version=&quot;1.1&quot; width=&quot;600px&quot; height=&quot;436px&quot; viewBox=&quot;0 0 3960 2880&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
-	&lt;desc&gt;Stata Graph - Graph&lt;/desc&gt;
-	&lt;rect x=&quot;0&quot; y=&quot;0&quot; width=&quot;3960&quot; height=&quot;2880&quot; style=&quot;fill:#EAF2F3;stroke:none&quot;/&gt;
-	&lt;rect x=&quot;0.00&quot; y=&quot;0.00&quot; width=&quot;3959.88&quot; height=&quot;2880.00&quot; style=&quot;fill:#EAF2F3&quot;/&gt;
-	&lt;rect x=&quot;2.88&quot; y=&quot;2.88&quot; width=&quot;3954.12&quot; height=&quot;2874.24&quot; style=&quot;fill:none;stroke:#EAF2F3;stroke-width:5.76&quot;/&gt;
-	&lt;rect x=&quot;1058.56&quot; y=&quot;100.86&quot; width=&quot;2132.83&quot; height=&quot;2132.77&quot; style=&quot;fill:#FFFFFF&quot;/&gt;
-	&lt;rect x=&quot;1061.44&quot; y=&quot;103.74&quot; width=&quot;2127.07&quot; height=&quot;2127.01&quot; style=&quot;fill:none;stroke:#FFFFFF;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;2170.27&quot; x2=&quot;3191.39&quot; y2=&quot;2170.27&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;1769.06&quot; x2=&quot;3191.39&quot; y2=&quot;1769.06&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;1367.85&quot; x2=&quot;3191.39&quot; y2=&quot;1367.85&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;966.64&quot; x2=&quot;3191.39&quot; y2=&quot;966.64&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;565.43&quot; x2=&quot;3191.39&quot; y2=&quot;565.43&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;164.22&quot; x2=&quot;3191.39&quot; y2=&quot;164.22&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.92&quot; y1=&quot;2233.63&quot; x2=&quot;1121.92&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1523.12&quot; y1=&quot;2233.63&quot; x2=&quot;1523.12&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2233.63&quot; x2=&quot;1924.31&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;2233.63&quot; x2=&quot;2325.51&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;2233.63&quot; x2=&quot;2726.71&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3128.03&quot; y1=&quot;2233.63&quot; x2=&quot;3128.03&quot; y2=&quot;100.86&quot; style=&quot;stroke:#EAF2F3;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.92&quot; y1=&quot;2170.27&quot; x2=&quot;3128.03&quot; y2=&quot;164.22&quot; style=&quot;stroke:#C10534;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2160.87&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2160.87&quot; x2=&quot;2124.91&quot; y2=&quot;2117.55&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2117.55&quot; x2=&quot;2225.15&quot; y2=&quot;2048.25&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2048.25&quot; x2=&quot;2325.51&quot; y2=&quot;1962.74&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1962.74&quot; x2=&quot;2425.75&quot; y2=&quot;1863.49&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1863.49&quot; x2=&quot;2526.11&quot; y2=&quot;1746.17&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1746.17&quot; x2=&quot;2626.35&quot; y2=&quot;1604.72&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1604.72&quot; x2=&quot;2726.71&quot; y2=&quot;1434.43&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1434.43&quot; x2=&quot;2826.95&quot; y2=&quot;1231.60&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1231.60&quot; x2=&quot;2927.31&quot; y2=&quot;989.66&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;989.66&quot; x2=&quot;3027.67&quot; y2=&quot;689.56&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;689.56&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2157.52&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2157.52&quot; x2=&quot;2124.91&quot; y2=&quot;2110.99&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2110.99&quot; x2=&quot;2225.15&quot; y2=&quot;2039.71&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2039.71&quot; x2=&quot;2325.51&quot; y2=&quot;1953.58&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1953.58&quot; x2=&quot;2425.75&quot; y2=&quot;1853.83&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1853.83&quot; x2=&quot;2526.11&quot; y2=&quot;1735.28&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1735.28&quot; x2=&quot;2626.35&quot; y2=&quot;1592.96&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1592.96&quot; x2=&quot;2726.71&quot; y2=&quot;1422.06&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1422.06&quot; x2=&quot;2826.95&quot; y2=&quot;1218.85&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1218.85&quot; x2=&quot;2927.31&quot; y2=&quot;976.17&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;976.17&quot; x2=&quot;3027.67&quot; y2=&quot;675.94&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;675.94&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2160.62&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2160.62&quot; x2=&quot;2124.91&quot; y2=&quot;2116.07&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2116.07&quot; x2=&quot;2225.15&quot; y2=&quot;2045.03&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2045.03&quot; x2=&quot;2325.51&quot; y2=&quot;1958.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1958.40&quot; x2=&quot;2425.75&quot; y2=&quot;1858.78&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1858.78&quot; x2=&quot;2526.11&quot; y2=&quot;1740.47&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1740.47&quot; x2=&quot;2626.35&quot; y2=&quot;1598.78&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1598.78&quot; x2=&quot;2726.71&quot; y2=&quot;1427.25&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1427.25&quot; x2=&quot;2826.95&quot; y2=&quot;1223.06&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1223.06&quot; x2=&quot;2927.31&quot; y2=&quot;980.75&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;980.75&quot; x2=&quot;3027.67&quot; y2=&quot;678.91&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;678.91&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1623.35&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1623.35&quot; y1=&quot;2170.40&quot; x2=&quot;1723.59&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1723.59&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;2024.55&quot; y2=&quot;2157.15&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2157.15&quot; x2=&quot;2124.91&quot; y2=&quot;2109.26&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2124.91&quot; y1=&quot;2109.26&quot; x2=&quot;2225.15&quot; y2=&quot;2036.37&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2036.37&quot; x2=&quot;2325.51&quot; y2=&quot;1949.25&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;1949.25&quot; x2=&quot;2425.75&quot; y2=&quot;1849.38&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1849.38&quot; x2=&quot;2526.11&quot; y2=&quot;1729.83&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1729.83&quot; x2=&quot;2626.35&quot; y2=&quot;1587.39&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1587.39&quot; x2=&quot;2726.71&quot; y2=&quot;1414.88&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1414.88&quot; x2=&quot;2826.95&quot; y2=&quot;1210.56&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1210.56&quot; x2=&quot;2927.31&quot; y2=&quot;967.88&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;967.88&quot; x2=&quot;3027.67&quot; y2=&quot;666.17&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3027.67&quot; y1=&quot;666.17&quot; x2=&quot;3127.91&quot; y2=&quot;164.22&quot; stroke-linecap=&quot;round&quot; style=&quot;stroke:#C0C0C0;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1179.34&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1208.17&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1265.71&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1294.55&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1352.09&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1380.93&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1438.47&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1467.30&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1524.85&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1553.68&quot; y1=&quot;2170.40&quot; x2=&quot;1611.35&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1640.06&quot; y1=&quot;2170.40&quot; x2=&quot;1697.73&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1726.56&quot; y1=&quot;2170.40&quot; x2=&quot;1784.10&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1812.94&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1870.48&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1899.32&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;1956.61&quot; y2=&quot;2166.81&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1985.32&quot; y1=&quot;2163.59&quot; x2=&quot;2024.55&quot; y2=&quot;2159.26&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2159.26&quot; x2=&quot;2041.01&quot; y2=&quot;2151.83&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2067.37&quot; y1=&quot;2140.08&quot; x2=&quot;2119.84&quot; y2=&quot;2116.44&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2143.97&quot; y1=&quot;2100.85&quot; x2=&quot;2191.12&quot; y2=&quot;2067.93&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2214.75&quot; y1=&quot;2051.34&quot; x2=&quot;2225.15&quot; y2=&quot;2044.04&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2044.04&quot; x2=&quot;2259.30&quot; y2=&quot;2014.84&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2281.08&quot; y1=&quot;1996.15&quot; x2=&quot;2324.89&quot; y2=&quot;1958.65&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2345.43&quot; y1=&quot;1938.36&quot; x2=&quot;2386.27&quot; y2=&quot;1897.89&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2406.81&quot; y1=&quot;1877.59&quot; x2=&quot;2425.75&quot; y2=&quot;1858.66&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1858.66&quot; x2=&quot;2445.67&quot; y2=&quot;1835.15&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2464.36&quot; y1=&quot;1813.24&quot; x2=&quot;2501.73&quot; y2=&quot;1769.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2520.29&quot; y1=&quot;1747.40&quot; x2=&quot;2526.11&quot; y2=&quot;1740.72&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1740.72&quot; x2=&quot;2554.20&quot; y2=&quot;1701.00&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2570.78&quot; y1=&quot;1677.48&quot; x2=&quot;2604.07&quot; y2=&quot;1630.46&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2620.65&quot; y1=&quot;1606.94&quot; x2=&quot;2626.35&quot; y2=&quot;1598.90&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1598.90&quot; x2=&quot;2650.60&quot; y2=&quot;1557.69&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2665.20&quot; y1=&quot;1532.82&quot; x2=&quot;2694.41&quot; y2=&quot;1483.19&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2709.01&quot; y1=&quot;1458.32&quot; x2=&quot;2726.71&quot; y2=&quot;1428.24&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1428.24&quot; x2=&quot;2736.73&quot; y2=&quot;1407.95&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2749.48&quot; y1=&quot;1382.08&quot; x2=&quot;2774.97&quot; y2=&quot;1330.48&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2787.72&quot; y1=&quot;1304.61&quot; x2=&quot;2813.21&quot; y2=&quot;1253.01&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2825.95&quot; y1=&quot;1227.14&quot; x2=&quot;2826.95&quot; y2=&quot;1225.29&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1225.29&quot; x2=&quot;2848.11&quot; y2=&quot;1174.05&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2859.12&quot; y1=&quot;1147.45&quot; x2=&quot;2881.27&quot; y2=&quot;1094.23&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2892.28&quot; y1=&quot;1067.62&quot; x2=&quot;2914.31&quot; y2=&quot;1014.41&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2925.33&quot; y1=&quot;987.80&quot; x2=&quot;2927.31&quot; y2=&quot;982.98&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;982.98&quot; x2=&quot;2943.89&quot; y2=&quot;933.23&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2953.05&quot; y1=&quot;905.88&quot; x2=&quot;2971.36&quot; y2=&quot;851.30&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2980.52&quot; y1=&quot;823.95&quot; x2=&quot;2998.71&quot; y2=&quot;769.38&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3007.87&quot; y1=&quot;742.03&quot; x2=&quot;3026.06&quot; y2=&quot;687.45&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3032.25&quot; y1=&quot;659.24&quot; x2=&quot;3043.14&quot; y2=&quot;602.81&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3048.58&quot; y1=&quot;574.47&quot; x2=&quot;3059.47&quot; y2=&quot;517.91&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3065.04&quot; y1=&quot;489.69&quot; x2=&quot;3075.93&quot; y2=&quot;433.14&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3081.38&quot; y1=&quot;404.92&quot; x2=&quot;3092.26&quot; y2=&quot;348.37&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3097.71&quot; y1=&quot;320.03&quot; x2=&quot;3108.72&quot; y2=&quot;263.47&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3114.17&quot; y1=&quot;235.26&quot; x2=&quot;3125.06&quot; y2=&quot;178.70&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1121.79&quot; y1=&quot;2170.40&quot; x2=&quot;1179.34&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1208.17&quot; y1=&quot;2170.40&quot; x2=&quot;1222.15&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1222.15&quot; y1=&quot;2170.40&quot; x2=&quot;1265.71&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1294.55&quot; y1=&quot;2170.40&quot; x2=&quot;1322.39&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1322.39&quot; y1=&quot;2170.40&quot; x2=&quot;1352.09&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1380.93&quot; y1=&quot;2170.40&quot; x2=&quot;1422.75&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1422.75&quot; y1=&quot;2170.40&quot; x2=&quot;1438.47&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1467.30&quot; y1=&quot;2170.40&quot; x2=&quot;1522.99&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1522.99&quot; y1=&quot;2170.40&quot; x2=&quot;1524.85&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1553.68&quot; y1=&quot;2170.40&quot; x2=&quot;1611.35&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1640.06&quot; y1=&quot;2170.40&quot; x2=&quot;1697.73&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1726.56&quot; y1=&quot;2170.40&quot; x2=&quot;1784.10&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1812.94&quot; y1=&quot;2170.40&quot; x2=&quot;1823.95&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1823.95&quot; y1=&quot;2170.40&quot; x2=&quot;1870.48&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1899.32&quot; y1=&quot;2170.40&quot; x2=&quot;1924.31&quot; y2=&quot;2170.40&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2170.40&quot; x2=&quot;1956.61&quot; y2=&quot;2166.68&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1985.20&quot; y1=&quot;2163.34&quot; x2=&quot;2024.55&quot; y2=&quot;2158.89&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2024.55&quot; y1=&quot;2158.89&quot; x2=&quot;2040.88&quot; y2=&quot;2151.34&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2067.12&quot; y1=&quot;2139.33&quot; x2=&quot;2119.34&quot; y2=&quot;2115.20&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2143.35&quot; y1=&quot;2099.36&quot; x2=&quot;2190.13&quot; y2=&quot;2065.82&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2213.64&quot; y1=&quot;2048.99&quot; x2=&quot;2225.15&quot; y2=&quot;2040.70&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2225.15&quot; y1=&quot;2040.70&quot; x2=&quot;2257.82&quot; y2=&quot;2012.36&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2279.72&quot; y1=&quot;1993.43&quot; x2=&quot;2323.16&quot; y2=&quot;1955.81&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2343.82&quot; y1=&quot;1935.63&quot; x2=&quot;2384.54&quot; y2=&quot;1895.04&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2404.96&quot; y1=&quot;1874.75&quot; x2=&quot;2425.75&quot; y2=&quot;1854.08&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2425.75&quot; y1=&quot;1854.08&quot; x2=&quot;2443.94&quot; y2=&quot;1832.42&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2462.63&quot; y1=&quot;1810.52&quot; x2=&quot;2499.75&quot; y2=&quot;1766.46&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2518.31&quot; y1=&quot;1744.43&quot; x2=&quot;2526.11&quot; y2=&quot;1735.15&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2526.11&quot; y1=&quot;1735.15&quot; x2=&quot;2552.34&quot; y2=&quot;1698.03&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2568.93&quot; y1=&quot;1674.39&quot; x2=&quot;2602.09&quot; y2=&quot;1627.36&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2618.80&quot; y1=&quot;1603.85&quot; x2=&quot;2626.35&quot; y2=&quot;1593.08&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2626.35&quot; y1=&quot;1593.08&quot; x2=&quot;2648.74&quot; y2=&quot;1554.72&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2663.22&quot; y1=&quot;1529.72&quot; x2=&quot;2692.30&quot; y2=&quot;1480.10&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2706.78&quot; y1=&quot;1455.22&quot; x2=&quot;2726.71&quot; y2=&quot;1421.07&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;1421.07&quot; x2=&quot;2734.75&quot; y2=&quot;1404.85&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2747.37&quot; y1=&quot;1378.99&quot; x2=&quot;2772.74&quot; y2=&quot;1327.26&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2785.36&quot; y1=&quot;1301.40&quot; x2=&quot;2810.86&quot; y2=&quot;1249.67&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2823.48&quot; y1=&quot;1223.80&quot; x2=&quot;2826.95&quot; y2=&quot;1216.75&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2826.95&quot; y1=&quot;1216.75&quot; x2=&quot;2846.00&quot; y2=&quot;1170.84&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2857.02&quot; y1=&quot;1144.23&quot; x2=&quot;2878.92&quot; y2=&quot;1091.01&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2890.06&quot; y1=&quot;1064.41&quot; x2=&quot;2911.96&quot; y2=&quot;1011.19&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2922.97&quot; y1=&quot;984.59&quot; x2=&quot;2927.31&quot; y2=&quot;974.31&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2927.31&quot; y1=&quot;974.31&quot; x2=&quot;2942.03&quot; y2=&quot;930.26&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2951.07&quot; y1=&quot;902.91&quot; x2=&quot;2969.26&quot; y2=&quot;848.21&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2978.29&quot; y1=&quot;820.86&quot; x2=&quot;2996.48&quot; y2=&quot;766.28&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3005.64&quot; y1=&quot;738.93&quot; x2=&quot;3023.83&quot; y2=&quot;684.36&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3030.89&quot; y1=&quot;656.39&quot; x2=&quot;3042.02&quot; y2=&quot;599.96&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3047.59&quot; y1=&quot;571.62&quot; x2=&quot;3058.73&quot; y2=&quot;515.19&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3064.30&quot; y1=&quot;486.97&quot; x2=&quot;3075.43&quot; y2=&quot;430.42&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3081.00&quot; y1=&quot;402.20&quot; x2=&quot;3092.14&quot; y2=&quot;345.64&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3097.71&quot; y1=&quot;317.43&quot; x2=&quot;3108.85&quot; y2=&quot;261.00&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;3114.42&quot; y1=&quot;232.66&quot; x2=&quot;3125.55&quot; y2=&quot;176.23&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;2233.63&quot; x2=&quot;855.98&quot; y2=&quot;100.86&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;2170.27&quot; x2=&quot;815.88&quot; y2=&quot;2170.27&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;2170.27&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,2170.27)&quot; text-anchor=&quot;middle&quot;&gt;0&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;1769.06&quot; x2=&quot;815.88&quot; y2=&quot;1769.06&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;1769.06&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,1769.06)&quot; text-anchor=&quot;middle&quot;&gt;.2&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;1367.85&quot; x2=&quot;815.88&quot; y2=&quot;1367.85&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;1367.85&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,1367.85)&quot; text-anchor=&quot;middle&quot;&gt;.4&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;966.64&quot; x2=&quot;815.88&quot; y2=&quot;966.64&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;966.64&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,966.64)&quot; text-anchor=&quot;middle&quot;&gt;.6&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;565.43&quot; x2=&quot;815.88&quot; y2=&quot;565.43&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;565.43&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,565.43)&quot; text-anchor=&quot;middle&quot;&gt;.8&lt;/text&gt;
-	&lt;line x1=&quot;855.98&quot; y1=&quot;164.22&quot; x2=&quot;815.88&quot; y2=&quot;164.22&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;765.90&quot; y=&quot;164.22&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 765.90,164.22)&quot; text-anchor=&quot;middle&quot;&gt;1&lt;/text&gt;
-	&lt;text x=&quot;655.89&quot; y=&quot;1167.25&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; transform=&quot;rotate(-90 655.89,1167.25)&quot; text-anchor=&quot;middle&quot;&gt;cumulative outcome proportion&lt;/text&gt;
-	&lt;line x1=&quot;1058.56&quot; y1=&quot;2233.63&quot; x2=&quot;3191.39&quot; y2=&quot;2233.63&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;1121.92&quot; y1=&quot;2233.63&quot; x2=&quot;1121.92&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;1121.92&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;0&lt;/text&gt;
-	&lt;line x1=&quot;1523.12&quot; y1=&quot;2233.63&quot; x2=&quot;1523.12&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;1523.12&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;20&lt;/text&gt;
-	&lt;line x1=&quot;1924.31&quot; y1=&quot;2233.63&quot; x2=&quot;1924.31&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;1924.31&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;40&lt;/text&gt;
-	&lt;line x1=&quot;2325.51&quot; y1=&quot;2233.63&quot; x2=&quot;2325.51&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;2325.51&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;60&lt;/text&gt;
-	&lt;line x1=&quot;2726.71&quot; y1=&quot;2233.63&quot; x2=&quot;2726.71&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;2726.71&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;80&lt;/text&gt;
-	&lt;line x1=&quot;3128.03&quot; y1=&quot;2233.63&quot; x2=&quot;3128.03&quot; y2=&quot;2273.73&quot; style=&quot;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;text x=&quot;3128.03&quot; y=&quot;2363.59&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;100&lt;/text&gt;
-	&lt;text x=&quot;2124.91&quot; y=&quot;2473.60&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;population percentage&lt;/text&gt;
-	&lt;rect x=&quot;890.50&quot; y=&quot;2558.24&quot; width=&quot;2468.81&quot; height=&quot;186.37&quot; style=&quot;fill:#FFFFFF&quot;/&gt;
-	&lt;rect x=&quot;893.38&quot; y=&quot;2561.12&quot; width=&quot;2463.05&quot; height=&quot;180.61&quot; style=&quot;fill:none;stroke:#000000;stroke-width:5.76&quot;/&gt;
-	&lt;line x1=&quot;933.69&quot; y1=&quot;2651.43&quot; x2=&quot;991.24&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1020.07&quot; y1=&quot;2651.43&quot; x2=&quot;1077.62&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1106.45&quot; y1=&quot;2651.43&quot; x2=&quot;1164.12&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1192.83&quot; y1=&quot;2651.43&quot; x2=&quot;1250.49&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;1279.20&quot; y1=&quot;2651.43&quot; x2=&quot;1308.04&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#1A476F;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2044.72&quot; y1=&quot;2651.43&quot; x2=&quot;2102.26&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2131.10&quot; y1=&quot;2651.43&quot; x2=&quot;2188.64&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2217.48&quot; y1=&quot;2651.43&quot; x2=&quot;2275.02&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2303.85&quot; y1=&quot;2651.43&quot; x2=&quot;2361.40&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;line x1=&quot;2390.23&quot; y1=&quot;2651.43&quot; x2=&quot;2419.07&quot; y2=&quot;2651.43&quot; style=&quot;stroke:#90353B;stroke-width:8.64&quot;/&gt;
-	&lt;text x=&quot;1368.06&quot; y=&quot;2686.46&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot;&gt;totalIncome&lt;/text&gt;
-	&lt;text x=&quot;2479.08&quot; y=&quot;2686.46&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot;&gt;disposableIncome&lt;/text&gt;
-&lt;/svg&gt;
-</body></html>"></iframe>
-
-
-
-    
-    
-    
-    
-    
 
 # Problem 2 Mata Functions
 
@@ -3232,8 +2734,8 @@ cV // The indices of one's are 2, 3, 5, and 8
 end
 ```
 
-    
-    
+
+​    
     ------------------------------------------------- mata (type end to exit) -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     > {
@@ -3276,4 +2778,4 @@ end
     
     : end
     ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    
+
